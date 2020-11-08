@@ -31,6 +31,7 @@ class Plugin {
                 'dashboard_primary',
                 'dashboard_quick_press',
                 'dashboard_right_now',
+                'welcome_panel',
             ],
             'post' => [
                 'commentstatusdiv',
@@ -41,9 +42,12 @@ class Plugin {
             ],
         ] );
 
-        remove_action( 'welcome_panel', 'wp_welcome_panel' );
+        if ( isset( $this->hide_meta_boxes['dashboard'] ) && ( $key = array_search( 'welcome_panel', $this->hide_meta_boxes['dashboard'] ) ) !== false ) {
+            remove_action( 'welcome_panel', 'wp_welcome_panel' );
+            unset( $this->hide_meta_boxes['dashboard'][ $key ] );
+        }
 
-        add_action( 'do_meta_boxes', [ $this, 'remove_meta_boxes' ], 10, 2 );
+        add_action( 'do_meta_boxes', [ $this, 'remove_meta_boxes' ], 5, 2 );
 
     }
 

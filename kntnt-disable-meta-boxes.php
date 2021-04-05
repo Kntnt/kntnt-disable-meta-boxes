@@ -5,7 +5,7 @@
  * Plugin Name:       Kntnt Disable Meta Boxes
  * Plugin URI:        https://www.kntnt.com/
  * Description:       Disables meta boxes.
- * Version:           1.1.0
+ * Version:           1.2.0
  * Author:            Thomas Barregren
  * Author URI:        https://www.kntnt.com/
  * License:           GPL-3.0+
@@ -21,7 +21,7 @@ class Plugin {
 	private $remove_meta_boxes = null;
 
 	public function __construct() {
-		add_action( 'plugins_loaded', [ $this, 'run' ] );
+		add_action( 'init', [ $this, 'run' ] );
 	}
 
 	public function run() {
@@ -41,6 +41,10 @@ class Plugin {
 				'revisionsdiv' => true,
 				'trackbacksdiv' => true,
 			],
+			'page' => [
+				'slugdiv' => false, // See comment above
+				'revisionsdiv' => true,
+			],
 		] );
 
 		if ( isset( $this->remove_meta_boxes['dashboard'] ) && isset( $this->remove_meta_boxes['dashboard']['welcome_panel'] ) ) {
@@ -55,15 +59,16 @@ class Plugin {
 					$hide_meta_boxes[ $screen ][] = $meta_box;
 					unset( $this->remove_meta_boxes[ $screen ][ $meta_box ] );
 				}
-				if ( $hide_meta_boxes ) {
-					add_filter( 'hidden_meta_boxes', function ( $hidden, $screen ) use ( $hide_meta_boxes ) {
-						if ( isset( $hide_meta_boxes[ $screen->id ] ) ) {
-							$hidden += $hide_meta_boxes[ $screen->id ];
-						}
-						return $hidden;
-					}, 10, 2 );
-				}
 			}
+		}
+
+		if ( $hide_meta_boxes ) {
+			add_filter( 'hidden_meta_boxes', function ( $hidden, $screen ) use ( $hide_meta_boxes ) {
+				if ( isset( $hide_meta_boxes[ $screen->id ] ) ) {
+					$hidden += $hide_meta_boxes[ $screen->id ];
+				}
+				return $hidden;
+			}, 10, 2 );
 		}
 
 		add_action( 'do_meta_boxes', [ $this, 'remove_meta_boxes' ], 5, 2 );

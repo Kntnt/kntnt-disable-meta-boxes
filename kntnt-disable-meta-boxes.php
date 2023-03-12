@@ -5,7 +5,7 @@
  * Plugin Name:       Kntnt Disable Meta Boxes
  * Plugin URI:        https://www.kntnt.com/
  * Description:       Disables meta boxes.
- * Version:           1.2.0
+ * Version:           1.3.0
  * Author:            Thomas Barregren
  * Author URI:        https://www.kntnt.com/
  * License:           GPL-3.0+
@@ -48,8 +48,10 @@ class Plugin {
 		] );
 
 		if ( isset( $this->remove_meta_boxes['dashboard'] ) && isset( $this->remove_meta_boxes['dashboard']['welcome_panel'] ) ) {
-			remove_action( 'welcome_panel', 'wp_welcome_panel' );
-			unset( $this->remove_meta_boxes['dashboard']['welcome_panel'] );
+			add_action( 'admin_init', function() {
+				remove_action( 'welcome_panel', 'wp_welcome_panel' );				
+				unset( $this->remove_meta_boxes['dashboard']['welcome_panel'] );
+			} );
 		}
 
 		$hide_meta_boxes = [];
